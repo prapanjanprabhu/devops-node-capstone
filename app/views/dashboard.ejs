@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/dashboard">Dashboard</a>
+    </nav>
+
+    <div class="container">
+        <h1>📊 Live System Dashboard</h1>
+
+        <div class="card">
+            <p><strong>Hostname:</strong> <%= hostname %></p>
+            <p><strong>Uptime:</strong> <%= uptime %> seconds</p>
+            <p><strong>Memory Usage:</strong> <%= memory %> MB</p>
+        </div>
+
+        <div class="card">
+            <p>Prometheus Metrics Endpoint:</p>
+            <a href="/metrics">View Metrics</a>
+        </div>
+    </div>
+</body>
+</html>

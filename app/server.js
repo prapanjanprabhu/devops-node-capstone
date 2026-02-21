@@ -1,11 +1,15 @@
 const express = require("express");
 const os = require("os");
+const path = require("path");
 const client = require("prom-client");
 
 const app = express();
-
-// ---- Config ----
 const PORT = process.env.PORT || 3000;
+
+// ---- View Engine ----
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // ---- Prometheus Metrics ----
 client.collectDefaultMetrics({ prefix: "node_app_" });
@@ -18,10 +22,9 @@ const httpRequestsTotal = new client.Counter({
 
 app.use((req, res, next) => {
   res.on("finish", () => {
-    const route = req.route?.path || req.path || "unknown";
     httpRequestsTotal.inc({
       method: req.method,
-      route,
+      route: req.path,
       status: String(res.statusCode),
     });
   });
@@ -30,18 +33,22 @@ app.use((req, res, next) => {
 
 // ---- Routes ----
 app.get("/", (req, res) => {
-  res.status(200).json({
-    message: "DevOps Node Capstone App is running ✅",
+  res.render("index");
+});
+
+app.get("/about", (req, res) => {
+  res.render("about");
+});
+
+app.get("/dashboard", (req, res) => {
+  res.render("dashboard", {
     hostname: os.hostname(),
-    time: new Date().toISOString(),
+    uptime: process.uptime().toFixed(2),
+    memory: (process.memoryUsage().rss / 1024 / 1024).toFixed(2)
   });
 });
 
-app.get("/health", (req, res) => {
-  res.status(200).send("OK");
-});
-
-// Prometheus scrape endpoint
+// Prometheus metrics
 app.get("/metrics", async (req, res) => {
   res.set("Content-Type", client.register.contentType);
   res.end(await client.register.metrics());
@@ -49,5 +56,5 @@ app.get("/metrics", async (req, res) => {
 
 // ---- Start ----
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
