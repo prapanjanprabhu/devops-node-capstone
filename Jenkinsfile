@@ -2,8 +2,8 @@ pipeline {
   agent any
 
   environment {
-    DOCKERHUB_USER = "DOCKERHUB_USERNAME"
-    IMAGE_NAME     = "${prapanjanprabhu}/devops-node-capstone"
+    DOCKERHUB_USER = "prapanjanprabhu"
+    IMAGE_NAME     = "${DOCKERHUB_USER}/devops-node-capstone"
     APP_HOST       = "35.154.72.81"
     SSH_CRED       = "app-ec2-ssh"
     DOCKER_CRED    = "dockerhub-user"
